@@ -6,16 +6,19 @@
 class Motor {
 private:
   PhoBot phobot;
-  int enc1, enc2;
-  int state, lastState;
+  int encoder;
+  String stop, forward, backward;
   volatile int pos = 0;
-  volatile int stop_pos = pos;
+  int stop_pos = 0;
   void interrupt();
 
 public:
+  static constexpr float clicksPerFeet = 2.317 * 560;
+  int direction = 1;
+  volatile bool running = false;
+
   Motor(int enc1, int enc2);
   void runTo(int pos_in);
-  void stop();
   void setPos(int pos_in);
   int getPos() { return pos; }
 };

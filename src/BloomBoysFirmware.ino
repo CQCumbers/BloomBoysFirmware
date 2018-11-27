@@ -6,16 +6,15 @@
 #include "motor.h"
 #include "sensor.h"
 
-// sampling depths in encoder clicks
-const int numDepths = 4;
-const int depths[numDepths] = {0, 1, 2, 3};
-// encoder clicks per feet
-const float clicksPerFeet = 10;//2.317 * 1120;
+// sampling depths in feet
+const int numDepths = 2;
+float depthsFeet[numDepths] = {0.5, 1};
+int depths[numDepths];
 // samping frequency in seconds
-const unsigned freq = 120;
+const unsigned freq = 20;
 
 // global variables
-Motor motor(D5, D6);
+Motor motor(4, D1);
 //Sensor sensor(97);
 int measurements[numDepths];
 unsigned nextProfile = 0;
@@ -23,6 +22,11 @@ unsigned nextProfile = 0;
 // setup serial & register cloud functions
 void setup() {
   Serial.begin(9600);
+  for (int i = 0; i < numDepths; ++i)
+    depths[i] = depthsFeet[i] * motor.clicksPerFeet;
+  // use as encoder Vcc
+  pinMode(D5, OUTPUT);
+  pinSetFast(D5);
 }
 
 // collect & send depth profile data repeatedly
@@ -38,6 +42,7 @@ void loop() {
 void profile() {
   for (int i = 0; i < numDepths; ++i) {
     motor.runTo(depths[i]);
+    delay(500);
     //measurements[i] = sensor.measure();
   }
   motor.runTo(0);
@@ -45,12 +50,11 @@ void profile() {
 
 // print profile to serial
 void show() {
-  Serial.printf("\n%s\n", Time.timeStr(nextProfile - freq));
-  Serial.printf("Depth (ft): DO (mg/L)\n");
-  Serial.printf("-----------------------");
+  Serial.print("\n" + Time.timeStr(nextProfile - freq) + "\n");
+  Serial.print("Depth (ft): DO (mg/L)\n");
+  Serial.print("-----------------------\n");
   for (int i = 0; i < numDepths; ++i) {
-    float depth = depths[i] / clicksPerFeet;
-    Serial.printf("%10f: %9f\n", depth, measurements[i]);
+    Serial.printf("%10f: %9f\n", depthsFeet, measurements[i]);
   }
 }
 
