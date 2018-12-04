@@ -1,0 +1,9 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#include "Particle.h"
+
+const String INFLUX_USER = "influxdb-username"
+const String INFLUX_PASSWORD = "influxdb-password"
+
+#endif

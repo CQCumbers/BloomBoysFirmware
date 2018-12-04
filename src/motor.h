@@ -13,7 +13,7 @@ private:
   void interrupt();
 
 public:
-  static constexpr float clicksPerFeet = 2.317 * 560;
+  static constexpr float clicksPerFeet = 1860;
   int direction = 1;
   volatile bool running = false;
 

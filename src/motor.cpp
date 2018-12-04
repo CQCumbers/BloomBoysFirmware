@@ -13,7 +13,6 @@ Motor::Motor(int motor, int enc_in): encoder(enc_in) {
 }
 
 void Motor::interrupt() {
-  Serial.printf("%i ", pos);
   pos += direction;
   // brake slightly ahead of time
   if (pos + direction * 35 != stop_pos)
