@@ -24,11 +24,11 @@ void Motor::interrupt() {
 // run motor to (possibly past) encoder pos
 void Motor::runTo(int pos_in) {
   stop_pos = pos_in;
-  if (pos_in > pos) {
+  if (pos_in > pos + 35) {
     phobot.setMotors(forward);
     direction = 1;
     running = true;
-  } else if (pos_in < pos) {
+  } else if (pos_in < pos - 35) {
     phobot.setMotors(backward);
     direction = -1;
     running = true;

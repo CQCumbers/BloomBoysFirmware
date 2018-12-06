@@ -9,16 +9,16 @@
 #include "config.h"
 
 // sampling depths in feet
-const int numDepths = 4;
-float depthsFeet[numDepths] = {5, 10, 15, 20};
+const int numDepths = 6;
+float depthsFeet[numDepths] = {0, 5, 10, 15, 20, 25};
 int depths[numDepths];
 // samping frequency in seconds
-unsigned freq = 120;
+unsigned freq = 240;
 
 // global variables
 Motor motor(4, D3);
 Sensor sensor(97);
-Client client(
+Influx db(
   INFLUX_HOST, 8086, "BLOOMBOYS",
   INFLUX_USER, INFLUX_PASSWORD
 );
@@ -33,6 +33,7 @@ void setup() {
   // use D5 as encoder Vcc
   pinMode(D5, OUTPUT);
   pinSetFast(D5);
+  Particle.function("offset", offset);
 }
 
 // collect & send depth profile data repeatedly
@@ -43,6 +44,12 @@ void loop() {
   profile();
 }
 
+int offset(String depth) {
+  motor.runTo(depth.toInt());
+  motor.setPos(0);
+  return 0;
+}
+
 // collect depth profile
 void profile() {
   for (int i = 0; i < numDepths; ++i) {
@@ -50,7 +57,7 @@ void profile() {
     measurements[i] = sensor.measure();
   }
   db.send(numDepths, depthsFeet, measurements);
-  motor.runTo(0);
+  motor.runTo(-1);
 }
 
 // print profile to serial

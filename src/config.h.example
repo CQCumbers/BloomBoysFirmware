@@ -3,6 +3,7 @@
 
 #include "Particle.h"
 
+const String INFLUX_HOST = "server.us-east-2.compute.amazonaws.com";
 const String INFLUX_USER = "influxdb-username"
 const String INFLUX_PASSWORD = "influxdb-password"
 
